@@ -13,11 +13,13 @@
  * ============================================================================
  */
 
-// Ключ GigaChat больше НЕ хранится в коде — он лежит на сервере в переменной
-// окружения GIGACHAT_API_KEY (файл .env локально, Secrets/env на Vercel/Render).
-// Клиент вызывает /api/gigachat без ключа — сервер подставит свой.
-// Здесь можно оставить пустую строку; личный ключ вводится через панель «Ключ API».
-export const DEFAULT_API_KEY = '';
+// ⚠️ ВРЕМЕННО (на время мастер-класса): общий ключ вшит как значение по умолчанию,
+// чтобы сервис работал сразу на всех компьютерах без настройки.
+// ПОСЛЕ МАСТЕР-КЛАССА вернуть в '' — постоянное место ключа: переменная окружения
+// GIGACHAT_API_KEY на сервере (.env локально, Secrets/env на Vercel/Render).
+// Ученик может ввести личный ключ через панель «Ключ API»; при обращении через сервер
+// приоритет у переменной окружения GIGACHAT_API_KEY, личный ключ работает без сервера.
+export const DEFAULT_API_KEY = 'MDE5YWRmZjItNzE2Ni03ODU5LTk1NTQtOGMyN2Q5Y2ZiZjFiOjBmYWM2NjBlLTdjZWMtNDNkNC1hMzMyLWNkMTZhYmViNTk3MQ==';
 
 // Адрес API шлюза (для GigaChat)
 export const DEFAULT_BASE_URL = 'https://gigachat.devices.sberbank.ru/api/v1/chat/completions';
