@@ -179,6 +179,19 @@ async function fetchGigaChat(
 // Client-side cache for access token
 let clientCachedToken: { token: string; expiresAt: number } | null = null;
 
+// Приписка про демо-режим показывается только один раз за сессию, а не в каждом ответе
+let simulatorNoticeShown = false;
+
+function withSimulatorNotice(simulated: string, reason: 'noKey' | 'network'): string {
+  if (simulatorNoticeShown) return simulated;
+  simulatorNoticeShown = true;
+  const note =
+    reason === 'noKey'
+      ? '*(ℹ️ Демо-режим: ключ нейросети не настроен. Живые ответы появятся при запуске через сервер (`npm run dev`) или после ввода ключа в панели «Ключ API».)*'
+      : '*(ℹ️ Демо-режим: ГигаЧат не принимает запросы напрямую из браузера (CORS и сертификат Минцифры) — статическому сайту нужен сервер-посредник. Живые ответы — при запуске через `npm run dev`, Vercel или Render.)*';
+  return simulated + '\n\n' + note;
+}
+
 async function fetchGigaChatClientSide(
   settings: ApiSettings,
   systemPrompt: string,
@@ -189,11 +202,7 @@ async function fetchGigaChatClientSide(
 
   // Ключа нет ни у клиента, ни (как оказалось) на сервере — запускаем демо-симулятор
   if (!cleanKey) {
-    const simulated = generateSimulatedResponse(systemPrompt, messages);
-    return (
-      simulated +
-      '\n\n*(ℹ️ Демо-режим: серверный ключ GIGACHAT_API_KEY не настроен, а личный ключ не введён. Попросите наставника настроить ключ на бэкенде или введите свой в панели «Ключ API».)*'
-    );
+    return withSimulatorNotice(generateSimulatedResponse(systemPrompt, messages), 'noKey');
   }
 
   // If user provided a Client Secret (not a raw eyJ... token), perform OAuth exchange
@@ -239,11 +248,7 @@ async function fetchGigaChatClientSide(
         ) {
           // On static hosting like GitHub Pages, Sberbank's servers block browser cross-origin requests.
           // Gracefully fallback to the built-in scenario simulation engine so the classroom experience continues seamlessly!
-          const simulated = generateSimulatedResponse(systemPrompt, messages);
-          return (
-            simulated +
-            '\n\n*(ℹ️ Режим симулятора: со статического хостинга GitHub Pages недоступен серверный бэкенд (CORS и сертификаты Сбера). Реальные ответы появятся, когда фронтенд подключён к бэкенду с настроенным GIGACHAT_API_KEY — локально (`node backend-server.js`), на Vercel или Render.)*'
-          );
+          return withSimulatorNotice(generateSimulatedResponse(systemPrompt, messages), 'network');
         }
         throw oauthErr;
       }
@@ -292,11 +297,7 @@ async function fetchGigaChatClientSide(
       error.name === 'TypeError' ||
       (error.message && (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')))
     ) {
-      const simulated = generateSimulatedResponse(systemPrompt, messages);
-      return (
-        simulated +
-        '\n\n*(ℹ️ Режим симулятора: статический хостинг GitHub Pages блокирует прямые запросы к GigaChat из-за CORS и сертификатов Сбера. Чтобы подключить реальную модель, запустите локальный бэкенд `node backend-server.js` или разверните проект на Vercel.)*'
-      );
+      return withSimulatorNotice(generateSimulatedResponse(systemPrompt, messages), 'network');
     }
     throw error;
   }

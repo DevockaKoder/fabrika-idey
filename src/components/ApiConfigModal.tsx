@@ -6,9 +6,7 @@ import {
   EyeOff,
   Save,
   CheckCircle,
-  HelpCircle,
   ShieldCheck,
-  Zap,
 } from 'lucide-react';
 import { ApiSettings, ApiProvider } from '../types';
 
@@ -29,7 +27,6 @@ export function ApiConfigModal({
   const [apiKey, setApiKey] = useState(settings.apiKey);
   const [baseUrl, setBaseUrl] = useState(settings.baseUrl);
   const [model, setModel] = useState(settings.model);
-  const [backendUrl, setBackendUrl] = useState(settings.backendUrl || '');
   const [showKey, setShowKey] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
@@ -38,7 +35,6 @@ export function ApiConfigModal({
     setApiKey(settings.apiKey);
     setBaseUrl(settings.baseUrl);
     setModel(settings.model);
-    setBackendUrl(settings.backendUrl || '');
   }, [settings, isOpen]);
 
   if (!isOpen) return null;
@@ -62,7 +58,7 @@ export function ApiConfigModal({
       apiKey: apiKey.trim(),
       baseUrl: baseUrl.trim(),
       model: model.trim(),
-      backendUrl: backendUrl.trim(),
+      backendUrl: settings.backendUrl || '',
     };
     onSave(updated);
     setSavedSuccess(true);
@@ -264,60 +260,17 @@ export function ApiConfigModal({
           </div>
 
           {provider === 'gigachat' && (
-            <div className="space-y-3">
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs font-bold text-slate-700">
-                    URL бэкенд-сервера (для GitHub Pages)
-                  </label>
-                  <span className="text-[11px] text-slate-400 font-normal">Необязательно</span>
-                </div>
-                <input
-                  id="input-backend-url"
-                  type="text"
-                  value={backendUrl}
-                  onChange={(e) => setBackendUrl(e.target.value)}
-                  placeholder="Оставьте пустым или укажите URL (напр. https://my-app.vercel.app)"
-                  className="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 font-mono text-xs"
-                />
-                <p className="text-[11px] text-slate-500 mt-1">
-                  По умолчанию используется встроенный <code className="bg-slate-100 px-1 py-0.5 rounded text-slate-700">/api/gigachat</code>. Если сайт на GitHub Pages, укажите URL вашего бэкенда на Vercel/Render.
-                </p>
-              </div>
-
-              <div className="p-3.5 bg-blue-50/80 border border-blue-200/80 rounded-xl text-xs text-blue-950 space-y-2">
-                <p className="font-semibold flex items-center gap-1.5 text-blue-900">
-                  <Zap className="w-4 h-4 text-blue-600 shrink-0" />
-                  <span>Как поднять бесплатный бэкенд за 1 минуту:</span>
-                </p>
-                <div className="text-[11px] leading-relaxed text-blue-800 space-y-1.5">
-                  <p>
-                    <strong>1. Самый быстрый способ:</strong> Разверните проект на <strong>Vercel (vercel.com)</strong>. В репозиторий уже добавлен готовый бессерверный бэкенд <code className="bg-blue-100/80 px-1 py-0.2 rounded font-mono">api/gigachat.ts</code>. На Vercel всё работает из коробки без CORS!
-                  </p>
-                  <p>
-                    <strong>2. Для GitHub Pages:</strong> Запустите бэкенд на <strong>Render.com</strong> (команда старта <code className="bg-blue-100/80 px-1 py-0.2 rounded font-mono">npm start</code>) или локально <code className="bg-blue-100/80 px-1 py-0.2 rounded font-mono">node backend-server.js</code>, и вставьте полученный адрес в поле выше.
-                  </p>
-                  <p className="text-[10px] text-blue-600">
-                    Подробная пошаговая инструкция доступна в файле <strong>README_BACKEND.md</strong>.
-                  </p>
-                </div>
-              </div>
+            <div className="p-3.5 bg-blue-50/80 border border-blue-200/80 rounded-xl text-xs text-blue-950 space-y-1.5">
+              <p className="font-semibold flex items-center gap-1.5 text-blue-900">
+                <ShieldCheck className="w-4 h-4 text-blue-600 shrink-0" />
+                <span>Ключ обычно уже встроен — вводить ничего не нужно</span>
+              </p>
+              <p className="text-[11px] leading-relaxed text-blue-800">
+                Поле для ключа — только если вы используете свой личный ключ GigaChat
+                или другой OpenAI-совместимый сервис. Настройки сохраняются в браузере.
+              </p>
             </div>
           )}
-
-          {/* Instruction on hardcoding in code */}
-          <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 space-y-1.5">
-            <p className="font-semibold text-slate-900 flex items-center gap-1.5">
-              <span>💡</span>
-              <span>Как вшить ключ прямо в код для всего класса:</span>
-            </p>
-            <p className="text-slate-600 leading-relaxed font-mono text-[11px] bg-white p-2 rounded border border-slate-200">
-              src/config/apiKeyConfig.ts ➔ const DEFAULT_API_KEY = &apos;ваш_ключ&apos;;
-            </p>
-            <p className="text-[11px] text-slate-500">
-              В автономном файле index.html ключ вставляется в начале тега &lt;script&gt; в константу DEFAULT_API_KEY. Тогда школьникам вообще не придётся ничего вводить.
-            </p>
-          </div>
         </div>
 
         {/* Footer */}
