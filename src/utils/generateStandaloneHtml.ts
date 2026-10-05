@@ -1,0 +1,1023 @@
+/* Автогенерируется из public/standalone.html командой: node gen-standalone.cjs */
+/* Не редактируйте вручную — правьте standalone.html и перегенерируйте. */
+
+export function getStandaloneHtmlContent(): string {
+  return `<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ИИ-сервис «Фабрика идей» | КГЭУ, кафедра ИТИС</title>
+  <meta name="description" content="Автономный ИИ-сервис для продумывания идей школьных проектов: обсудите идею с ИИ-помощниками (научный руководитель, генератор идей, рецензент, тренер защиты, библиотекарь-исследователь) и выгрузите готовый отчёт. Работает на GitHub Pages полностью в браузере. КГЭУ, кафедра ИТИС." />
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-900 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- HEADER -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-center justify-between py-3 gap-3">
+        
+        <!-- Logo & Title -->
+        <div class="flex items-center gap-3 self-start md:self-auto">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-xs font-bold text-lg">
+            💡
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">
+                Фабрика идей
+              </h1>
+              <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
+                КГЭУ • кафедра ИТИС
+              </span>
+            </div>
+            <p class="text-xs text-slate-500 hidden sm:block">
+              ИИ-сервис продумывания идей школьных проектов
+            </p>
+          </div>
+        </div>
+
+        <!-- 45-Minute Lesson Timer -->
+        <div class="flex items-center gap-3 bg-slate-50 px-3.5 py-1.5 rounded-xl border border-slate-200 text-sm">
+          <div class="flex items-center gap-1.5 text-slate-700 font-medium">
+            <span class="text-indigo-600 text-base">⏱️</span>
+            <span id="timer-display" class="font-mono text-base font-bold text-slate-900">45:00</span>
+          </div>
+
+          <div class="hidden lg:flex flex-col text-[11px] text-slate-500 leading-tight">
+            <span class="font-semibold text-slate-700">Этап занятия:</span>
+            <span id="stage-display" class="truncate max-w-[200px]">1. Выбор помощника и знакомство (0-10 мин)</span>
+          </div>
+
+          <div class="flex items-center gap-1 pl-1 border-l border-slate-200">
+            <button id="btn-timer-toggle" class="p-1 rounded-md text-slate-600 hover:text-indigo-600 hover:bg-white transition-colors" title="Старт/Пауза">
+              ▶️
+            </button>
+            <button id="btn-timer-reset" class="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-white transition-colors" title="Сбросить">
+              🔄
+            </button>
+          </div>
+        </div>
+
+        <!-- Top Right Actions -->
+        <div class="flex items-center gap-2 flex-wrap self-end md:self-auto">
+          <button id="btn-toggle-key-panel" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 transition-colors">
+            <span>🔑</span>
+            <span id="key-btn-label">Ключ API / Демо</span>
+          </button>
+          <button id="btn-show-guide" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors">
+            <span>📖</span>
+            <span class="hidden sm:inline">Инструкция наставника</span>
+            <span class="sm:hidden">Инструкция</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+    <!-- Progress Bar -->
+    <div class="w-full bg-slate-100 h-0.5">
+      <div id="timer-progress" class="bg-indigo-600 h-0.5 w-0 transition-all duration-1000"></div>
+    </div>
+  </header>
+
+  <!-- COLLAPSIBLE API KEY & MENTOR PANEL -->
+  <section id="key-panel" class="hidden bg-slate-50 border-b border-slate-200 shadow-inner">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-indigo-600 text-lg">🛡️</span>
+          <div>
+            <h2 class="text-sm font-bold text-slate-900">Безопасная панель наставника (API Key / Token)</h2>
+            <p class="text-xs text-slate-500">Ключ сохраняется в localStorage текущего ПК и используется только в браузере</p>
+          </div>
+        </div>
+        <button id="btn-close-key-panel" class="text-xs text-slate-500 hover:text-slate-800 px-2 py-1 rounded bg-slate-200">Скрыть панель ✕</button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Режим работы</label>
+          <select id="api-provider" class="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white">
+            <option value="demo">💡 Демо-эмулятор (Без ключа, готовые роли для класса)</option>
+            <option value="openai">⚡ OpenAI-совместимый API (OpenRouter, Groq, DeepSeek)</option>
+            <option value="gigachat">🟢 GigaChat API (Сбер)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">API Key / Token (скрыт)</label>
+          <div class="relative">
+            <input id="api-key-input" type="password" placeholder="Вставьте токен или ключ..." class="w-full p-2 pr-16 text-xs rounded-xl border border-slate-300 bg-white font-mono" />
+            <button id="btn-toggle-eye" class="absolute right-2 top-2 text-[11px] text-slate-400 hover:text-slate-700">👁️ показать</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Base URL / Модель</label>
+          <div class="flex gap-2">
+            <input id="api-url-input" type="text" placeholder="https://openrouter.ai/api/v1" class="flex-1 p-2 text-xs rounded-xl border border-slate-300 bg-white font-mono" />
+            <button id="btn-save-key" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors shrink-0">
+              Сохранить
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="save-status-toast" class="hidden text-xs text-emerald-700 font-semibold flex items-center gap-1">
+        ✓ Настройки успешно сохранены в localStorage браузера!
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN TWO-COLUMN CONTENT -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+    
+    <!-- LEFT COLUMN: ИИ-ПОМОЩНИКИ + ВЫГРУЗКА ИДЕИ (5 of 12 cols) -->
+    <div class="lg:col-span-5 flex flex-col gap-5">
+
+      <!-- Assistant Picker -->
+      <section class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+        <!-- Panel Header -->
+        <div class="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/70 space-y-3">
+          <div class="flex items-center gap-2">
+            <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold">🧭</span>
+            <div>
+              <h2 class="text-sm font-bold text-slate-900">ИИ-помощники</h2>
+              <p class="text-xs text-slate-500">Выберите собеседника для обсуждения идеи</p>
+            </div>
+          </div>
+
+          <!-- Assistant Selector Dropdown -->
+          <div>
+            <label for="scenario-select" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+              Помощник:
+            </label>
+            <select id="scenario-select" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 cursor-pointer shadow-2xs">
+              <option value="supervisor">🎓 Научный руководитель (Вера Александровна)</option>
+              <option value="generator">💡 Генератор идей «Идея-Бум» (мозговой штурм)</option>
+              <option value="critic">⚖️ Строгий рецензент (профессор Рецензов)</option>
+              <option value="coach">🎤 Тренер защиты проекта (коуч Тимур)</option>
+              <option value="librarian">📚 Библиотекарь-исследователь (Мира Эльдаровна)</option>
+            </select>
+          </div>
+
+          <!-- Mission Goal Banner -->
+          <div id="scenario-goal-box" class="p-3 bg-white border border-slate-200 rounded-xl text-xs space-y-1 shadow-2xs">
+            <span class="font-bold text-slate-800 block text-[11px]">🎯 Задача бота:</span>
+            <p id="scenario-goal-text" class="text-slate-600 text-[11px] leading-relaxed">
+              Помогает превратить смутную идею в чёткую тему проекта: задаёт наводящие вопросы, формулирует цель и задачи — и никогда не делает работу за ученика.
+            </p>
+          </div>
+
+          <p class="text-[10px] text-slate-400 text-center">Правила поведения помощника зашиты в системный промпт под капотом. При смене помощника диалог очищается.</p>
+        </div>
+      </section>
+
+      <!-- Idea Export -->
+      <section class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+        <div class="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/70">
+          <div class="flex items-center gap-2">
+            <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold">📤</span>
+            <div>
+              <h2 class="text-sm font-bold text-slate-900">Выгрузка идеи</h2>
+              <p class="text-xs text-slate-500">Вставьте скопированные фрагменты — они соберутся в отчёт</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-3 sm:p-4 space-y-2" id="idea-boxes-container">
+          <!-- Idea boxes are rendered by JS -->
+        </div>
+
+        <div class="p-4 border-t border-slate-200 bg-slate-50 space-y-2">
+          <button id="btn-export-report" class="w-full flex items-center justify-center gap-2 py-3 px-4 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 rounded-xl shadow-xs transition-all">
+            <span>📥 Сформировать и скачать отчёт</span>
+          </button>
+          <div class="flex items-center gap-2">
+            <button id="btn-copy-report" class="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:border-indigo-300 hover:text-indigo-700 rounded-xl transition-all">
+              <span>📋 Скопировать отчёт</span>
+            </button>
+            <button id="btn-clear-boxes" class="flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold text-slate-500 bg-white border border-slate-300 hover:border-rose-300 hover:text-rose-600 rounded-xl transition-all">
+              <span>🗑 Очистить</span>
+            </button>
+          </div>
+          <p class="text-[10px] text-slate-400 leading-snug">В отчёт попадут только заполненные поля (идеи нумеруются по порядку). Черновики сохраняются в браузере.</p>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- RIGHT COLUMN: ИНТЕРАКТИВНЫЙ ДИАЛОГ (7 of 12 cols) -->
+    <section class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden flex flex-col h-[740px]">
+      <!-- Chat Header -->
+      <div class="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/70 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+            🤖
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-sm font-bold text-slate-900">Обсуждение идеи</h2>
+              <span id="msg-count-badge" class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">0 сообщ.</span>
+            </div>
+            <p id="chat-role-subtitle" class="text-xs text-slate-500 truncate max-w-[240px]">
+              Помощник: Научный руководитель
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="btn-clear-messages" class="text-xs text-slate-500 hover:text-rose-600 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white transition-colors">
+            🗑️ Очистить
+          </button>
+          <button id="btn-download-chat" class="text-xs font-bold text-slate-800 hover:text-indigo-600 px-3 py-1.5 rounded-lg border border-slate-200 bg-white transition-colors shadow-2xs">
+            💾 Скачать диалог
+          </button>
+        </div>
+      </div>
+
+      <!-- Messages Area -->
+      <div id="messages-container" class="flex-1 p-4 sm:p-5 overflow-y-auto space-y-4 bg-slate-50/30">
+        <!-- Dynamic chat bubbles -->
+      </div>
+
+      <!-- Status "ИИ печатает..." -->
+      <div id="typing-indicator" class="hidden px-5 py-2 flex items-center gap-2 text-xs text-slate-500 bg-slate-50/70 border-t border-slate-100">
+        <span class="font-medium text-indigo-600">ИИ печатает...</span>
+        <span class="inline-flex gap-1">
+          <span class="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+          <span class="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+          <span class="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-bounce"></span>
+        </span>
+      </div>
+
+      <!-- Input Bar -->
+      <div class="p-3 sm:p-4 border-t border-slate-200 bg-white space-y-2">
+        <div class="flex items-center gap-2">
+          <span class="text-[11px] text-slate-400 font-medium">Ученик (для отчётов):</span>
+          <input id="student-name-input" type="text" placeholder="Имя Фамилия (Класс)" class="text-xs px-2 py-0.5 rounded border border-slate-200 max-w-[200px]" />
+        </div>
+
+        <div class="flex items-end gap-2">
+          <textarea id="chat-input" rows="2" placeholder="Напишите реплику для ИИ (Enter — отправить, Shift+Enter — перенос строки)..." class="flex-1 p-3 text-xs text-slate-800 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none leading-relaxed"></textarea>
+          <button id="btn-send-message" class="px-4 py-3 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white rounded-xl font-semibold text-xs flex items-center gap-1 shadow-xs transition-colors shrink-0">
+            <span>Отправить</span> ➔
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MENTOR GUIDE MODAL -->
+  <div id="guide-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 space-y-4 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-bold text-base text-slate-900">📖 Инструкция: Как выложить на GitHub Pages за 2 минуты</h3>
+        <button id="btn-close-guide" class="text-slate-400 hover:text-slate-700 text-lg">✕</button>
+      </div>
+      <div class="space-y-3 text-xs text-slate-600 leading-relaxed">
+        <div class="p-3 bg-indigo-50 rounded-xl border border-indigo-100 text-indigo-900 space-y-1">
+          <p class="font-bold">1. Создайте репозиторий на GitHub</p>
+          <p>Зайдите на <a href="https://github.com/new" target="_blank" class="underline text-indigo-700 font-semibold">github.com/new</a>, введите имя (например: <code class="bg-white px-1 py-0.5 rounded">fabrika-idey</code>), выберите <strong>Public</strong> и нажмите «Create repository».</p>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+          <p class="font-bold text-slate-800">2. Загрузите файл index.html</p>
+          <p>В репозитории нажмите <strong>Add file ➔ Upload files</strong>. Перетащите сохранённый файл <code class="bg-slate-200 px-1 py-0.5 rounded">index.html</code> и нажмите <strong>Commit changes</strong>.</p>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+          <p class="font-bold text-slate-800">3. Включите Pages в настройках</p>
+          <p>Перейдите в <strong>Settings ➔ Pages ➔ Branch</strong>, выберите ветку <strong>main</strong> и папку <strong>/ (root)</strong>, затем нажмите <strong>Save</strong>.</p>
+        </div>
+        <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-emerald-900">
+          <p class="font-bold">4. Готово!</p>
+          <p>Через 1 минуту сайт будет доступен по ссылке вида: <code class="bg-white px-1.5 py-0.5 rounded font-mono font-bold">https://&lt;username&gt;.github.io/fabrika-idey/</code></p>
+        </div>
+      </div>
+      <div class="text-right pt-2 border-t">
+        <button id="btn-guide-ok" class="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold">Понятно</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    const AFFILIATION = 'КГЭУ, кафедра ИТИС';
+
+    // Системные промпты помощников хранятся здесь, «под капотом» (в интерфейсе не редактируются)
+    const SCENARIOS = {
+      supervisor: {
+        title: 'Научный руководитель',
+        goal: 'Помогает превратить смутную идею в чёткую тему проекта: задаёт наводящие вопросы, формулирует актуальность, цель и задачи — и никогда не делает работу за ученика.',
+        prompts: [
+          'Здравствуйте! Хочу делать проект, но тема ещё не созрела. С чего начать?',
+          'Помогите сформулировать цель и задачи проекта про экологию школьной столовой.',
+          'Я хочу написать про космос — только не знаю что именно. Подскажите тему!'
+        ],
+        systemPrompt: "Ты — Вера Александровна, опытный научный руководитель школьных проектов с 20-летним стажем.\\n\\nТвоя роль:\\n1. Помогать ученикам превращать смутные желания («хочу про космос») в чёткую тему школьного проекта.\\n2. Работать по схеме: актуальность → цель → задачи → гипотеза или продукт.\\n3. Сначала задать 1–2 наводящих вопроса об интересах ученика, и только потом предлагать формулировки.\\n\\nТвой стиль:\\n- Доброжелательный, но требовательный: обращайся на «вы», хвали за конкретику.\\n- Отвечай структурированно, не более 200 слов.\\n\\nОграничения:\\n- НИКОГДА не пиши за ученика готовые разделы проекта — давай план и задавай вопросы.\\n- Не обещай побед на конференциях и конкретных оценок.\\n- Не выходи из роли научного руководителя."
+      },
+      generator: {
+        title: 'Генератор идей «Идея-Бум»',
+        goal: 'Энергичный генератор: по интересам школьника выдаёт ровно 3 идеи проекта — с плюсами, минусами и оценкой сложности. Всегда три варианта на выбор!',
+        prompts: [
+          'Я люблю футбол и видеоигры. Предложи идеи для школьного проекта!',
+          'Меня интересует мода и экология. Что можно сделать?',
+          'Скукота! Придумай что-нибудь необычное про нашу школу.'
+        ],
+        systemPrompt: "Ты — «Идея-Бум», неунывающий генератор идей для школьных проектов.\\n\\nТвоя роль:\\n1. Выслушать, что нравится школьнику (спорт, игры, музыка, животные — что угодно).\\n2. Выдавать РОВНО 3 идеи проекта в формате:\\n   - 💡 Название и суть (1–2 предложения)\\n   - ✅ Плюс\\n   - ⚠️ Минус или сложность\\n   - 🔧 Сложность: лёгкая / средняя / сложная\\n3. Спросить, какая идея зацепила, и предложить развить её в тему.\\n\\nТвой стиль:\\n- Бодрый, вдохновляющий, на «ты», с эмодзи (💡🚀⚡).\\n- Идеи выполнимы школьником за 1–2 месяца без дорогого оборудования.\\n\\nОграничения:\\n- ВСЕГДА ровно 3 идеи, даже если просят одну — вежливо настаивай на правиле.\\n- Ничего опасного, дорогого или неэтичного.\\n- Не выходи из роли."
+      },
+      critic: {
+        title: 'Строгий рецензент',
+        goal: 'Профессор Рецензов честно ищет слабые места идеи, как член жюри конференции: слабое место → почему проблема → как исправить. Критикует идею, а не человека.',
+        prompts: [
+          'Оцените идею: я буду изучать, сколько учеников нашей школы любят пиццу.',
+          'Мой проект — плакат «Вред курения». Как вам?',
+          'Что не так с идеей опроса одноклассников про социальные сети?'
+        ],
+        systemPrompt: "Ты — профессор Рецензов, строгий член жюри школьной проектной конференции.\\n\\nТвоя роль:\\n1. Честно оценивать идеи школьных проектов.\\n2. Разбирать каждую идею по схеме:\\n   - 🔍 Слабое место\\n   - ❓ Почему это проблема (одно предложение)\\n   - 🛠 Как исправить (конкретная рекомендация)\\n\\nТвой стиль:\\n- Требовательный, прямой, но уважительный. Критикуешь идею, а не человека.\\n- Если идея достойная — скажи об этом, но всегда найди, что улучшить.\\n\\nОграничения:\\n- ЗАПРЕЩЕНО оскорблять и обесценивать ученика. Только деловая критика.\\n- Не делай вид, что плохая идея хорошая: честность важнее вежливого кивка.\\n- Не выходи из роли."
+      },
+      coach: {
+        title: 'Тренер защиты проекта',
+        goal: 'Коуч Тимур готовит к защите: структура выступления, слайды, репетиция каверзных вопросов комиссии и поддержка при волнении. Но никогда не отвечает за ученика!',
+        prompts: [
+          'Проект готов, а я не знаю, что говорить на защите. С чего начать?',
+          'Проведи со мной репетицию: задай каверзный вопрос комиссии!',
+          'Я очень боюсь выступать перед всем классом. Что делать?'
+        ],
+        systemPrompt: "Ты — Тимур, энергичный тренер по защите школьных проектов.\\n\\nТвоя роль:\\n1. Помогать подготовиться к защите:\\n   - структура выступления на 5–7 минут (проблема → цель → как делал → результат → выводы);\\n   - что вынести на слайды, а что рассказать словами;\\n   - репетиция: играть роль придирчивого члена комиссии и разбирать ответы ученика.\\n2. При волнении давать конкретные приёмы (дыхание, репетиция вслух, «якорная» первая фраза).\\n\\nТвой стиль:\\n- Бодрый, поддерживающий, на «ты», как спортивный тренер.\\n- Отвечай компактно: до 150 слов или список из 3–5 пунктов.\\n\\nОграничения:\\n- НИКОГДА не отвечай за ученика на вопросы комиссии и не пиши текст выступления «под чтение» — задавай вопросы, чтобы ученик сформулировал ответ сам.\\n- Не выходи из роли тренера."
+      },
+      librarian: {
+        title: 'Библиотекарь-исследователь',
+        goal: 'Методист Мира Эльдаровна помогает составить план исследования и подсказывает, какие источники искать и как проверять их достоверность. Точные ссылки не выдумывает!',
+        prompts: [
+          'Помогите составить план исследования на тему «Влияние музыки на учёбу».',
+          'Где искать информацию для проекта про историю моего района?',
+          'Как понять, что источник из интернета можно доверять?'
+        ],
+        systemPrompt: "Ты — Мира Эльдаровна, школьный библиотекарь-методист, знаток исследовательской работы.\\n\\nТвоя роль:\\n1. Помогать составлять план исследования: вопрос → гипотеза → методы → данные → выводы.\\n2. Подсказывать, КАКИЕ типы источников искать и где.\\n3. Учить проверять достоверность: автор, дата, первоисточник, перекрёстная проверка.\\n\\nТвой стиль:\\n- Спокойный, вдумчивый, на «вы».\\n- Отвечай по полочкам: нумерованный список, до 180 слов.\\n\\nОграничения:\\n- НИКОГДА не выдумывай точные ссылки и названия книг — давай направление поиска и честно говори, что выходные данные нужно проверить.\\n- Не делай работу за ученика, а учи его методу.\\n- Не выходи из роли."
+      }
+    };
+
+    const IDEA_BOX_COUNT = 5;
+    const IDEA_BOXES_KEY = 'fi_idea_boxes';
+
+    let currentScenarioKey = 'supervisor';
+    let messages = [];
+    let isGenerating = false;
+    let ideaBoxes = [];
+
+    let apiConfig = {
+      provider: localStorage.getItem('fi_provider') || 'demo',
+      apiKey: localStorage.getItem('fi_api_key') || '',
+      baseUrl: localStorage.getItem('fi_base_url') || 'https://openrouter.ai/api/v1',
+      model: localStorage.getItem('fi_model') || 'gpt-4o-mini'
+    };
+
+    const scenarioSelect = document.getElementById('scenario-select');
+    const scenarioGoalText = document.getElementById('scenario-goal-text');
+    const messagesContainer = document.getElementById('messages-container');
+    const chatInput = document.getElementById('chat-input');
+    const btnSendMessage = document.getElementById('btn-send-message');
+    const btnClearMessages = document.getElementById('btn-clear-messages');
+    const btnDownloadChat = document.getElementById('btn-download-chat');
+    const typingIndicator = document.getElementById('typing-indicator');
+    const msgCountBadge = document.getElementById('msg-count-badge');
+    const chatRoleSubtitle = document.getElementById('chat-role-subtitle');
+    const studentNameInput = document.getElementById('student-name-input');
+
+    const ideaBoxesContainer = document.getElementById('idea-boxes-container');
+    const btnExportReport = document.getElementById('btn-export-report');
+    const btnCopyReport = document.getElementById('btn-copy-report');
+    const btnClearBoxes = document.getElementById('btn-clear-boxes');
+    
+    const keyPanel = document.getElementById('key-panel');
+    const btnToggleKeyPanel = document.getElementById('btn-toggle-key-panel');
+    const btnCloseKeyPanel = document.getElementById('btn-close-key-panel');
+    const apiProviderSelect = document.getElementById('api-provider');
+    const apiKeyInput = document.getElementById('api-key-input');
+    const apiUrlInput = document.getElementById('api-url-input');
+    const btnToggleEye = document.getElementById('btn-toggle-eye');
+    const btnSaveKey = document.getElementById('btn-save-key');
+    const keyBtnLabel = document.getElementById('key-btn-label');
+    const saveStatusToast = document.getElementById('save-status-toast');
+
+    const timerDisplay = document.getElementById('timer-display');
+    const timerProgress = document.getElementById('timer-progress');
+    const stageDisplay = document.getElementById('stage-display');
+    const btnTimerToggle = document.getElementById('btn-timer-toggle');
+    const btnTimerReset = document.getElementById('btn-timer-reset');
+
+    const guideModal = document.getElementById('guide-modal');
+    const btnShowGuide = document.getElementById('btn-show-guide');
+    const btnCloseGuide = document.getElementById('btn-close-guide');
+    const btnGuideOk = document.getElementById('btn-guide-ok');
+
+    function init() {
+      apiProviderSelect.value = apiConfig.provider;
+      apiKeyInput.value = apiConfig.apiKey;
+      apiUrlInput.value = apiConfig.baseUrl;
+      updateKeyButtonStatus();
+
+      loadScenario(currentScenarioKey);
+
+      const savedStudent = localStorage.getItem('fi_student_name');
+      if (savedStudent) studentNameInput.value = savedStudent;
+
+      studentNameInput.addEventListener('input', (e) => {
+        localStorage.setItem('fi_student_name', e.target.value);
+      });
+
+      try {
+        const savedBoxes = JSON.parse(localStorage.getItem(IDEA_BOXES_KEY) || '[]');
+        if (Array.isArray(savedBoxes) && savedBoxes.length === IDEA_BOX_COUNT) {
+          ideaBoxes = savedBoxes.map(v => (typeof v === 'string' ? v : ''));
+        } else {
+          ideaBoxes = Array(IDEA_BOX_COUNT).fill('');
+        }
+      } catch (e) {
+        ideaBoxes = Array(IDEA_BOX_COUNT).fill('');
+      }
+      renderIdeaBoxes();
+
+      renderMessages();
+      startTimerLogic();
+    }
+
+    function updateKeyButtonStatus() {
+      if (apiConfig.provider !== 'demo' && apiConfig.apiKey.trim()) {
+        keyBtnLabel.textContent = 'API подключен (OK)';
+        btnToggleKeyPanel.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 transition-colors';
+      } else {
+        keyBtnLabel.textContent = 'Ключ API / Демо';
+        btnToggleKeyPanel.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 transition-colors';
+      }
+    }
+
+    function loadScenario(key) {
+      currentScenarioKey = key;
+      const sc = SCENARIOS[key] || SCENARIOS.supervisor;
+      scenarioGoalText.textContent = sc.goal;
+      chatRoleSubtitle.textContent = 'Помощник: ' + sc.title;
+      renderMessages();
+    }
+
+    function renderIdeaBoxes() {
+      ideaBoxesContainer.innerHTML = '';
+      ideaBoxes.forEach((value, idx) => {
+        const row = document.createElement('div');
+        row.className = 'flex items-start gap-2';
+
+        const label = document.createElement('span');
+        label.className = 'text-[10px] font-bold text-slate-400 uppercase tracking-wider w-12 shrink-0 pt-2.5 text-right';
+        label.textContent = 'Идея ' + (idx + 1);
+
+        const ta = document.createElement('textarea');
+        ta.className = 'idea-box flex-1 p-2.5 text-xs text-slate-800 bg-slate-50/50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 leading-relaxed';
+        ta.placeholder = 'Вставьте сюда скопированный текст из диалога...';
+        ta.rows = 2;
+        ta.value = value;
+        ta.addEventListener('input', () => {
+          ideaBoxes[idx] = ta.value;
+          localStorage.setItem(IDEA_BOXES_KEY, JSON.stringify(ideaBoxes));
+        });
+
+        row.appendChild(label);
+        row.appendChild(ta);
+        ideaBoxesContainer.appendChild(row);
+      });
+    }
+
+    function buildIdeaReport() {
+      const studentName = (studentNameInput.value.trim() || '—');
+      const serviceUrl = window.location.origin && window.location.origin !== 'null'
+        ? window.location.origin
+        : 'file://' + (window.location.pathname || '');
+      const now = new Date();
+
+      let rep = '=======================================================\\n';
+      rep += 'ВЫГРУЗКА ИДЕИ — ИИ-СЕРВИС «ФАБРИКА ИДЕЙ»\\n';
+      rep += '=======================================================\\n\\n';
+      rep += 'Аффилиация: ' + AFFILIATION + '\\n';
+      rep += 'Ссылка на сайт: ' + serviceUrl + '\\n';
+      rep += 'Ученик: ' + studentName + '\\n';
+      rep += 'Дата: ' + now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU') + '\\n\\n';
+
+      const filled = ideaBoxes.map(b => (b || '').trim()).filter(b => b.length > 0);
+      if (filled.length === 0) {
+        rep += '[Идеи не заполнены]\\n';
+      } else {
+        filled.forEach((text, idx) => {
+          rep += '-------------------------------------------------------\\n';
+          rep += 'Идея ' + (idx + 1) + ':\\n';
+          rep += '-------------------------------------------------------\\n';
+          rep += text + '\\n\\n';
+        });
+      }
+
+      rep += '=======================================================\\n';
+      rep += 'Подпись наставника / Оценка: ___________________________\\n';
+      rep += '=======================================================\\n';
+      return rep;
+    }
+
+    function downloadTextFile(content, filename) {
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    btnExportReport.addEventListener('click', () => {
+      const student = (studentNameInput.value.trim() || 'Ученик');
+      downloadTextFile(
+        buildIdeaReport(),
+        'ФабрикаИдей_отчёт_' + student.replace(/[^a-zA-Zа-яА-Я0-9_-]/g, '_') + '.txt'
+      );
+      const originalText = btnExportReport.innerHTML;
+      btnExportReport.innerHTML = '<span>✓ Отчёт сформирован!</span>';
+      setTimeout(() => { btnExportReport.innerHTML = originalText; }, 1800);
+    });
+
+    btnCopyReport.addEventListener('click', () => {
+      navigator.clipboard.writeText(buildIdeaReport());
+      const originalText = btnCopyReport.innerHTML;
+      btnCopyReport.innerHTML = '<span>✓ Скопировано</span>';
+      setTimeout(() => { btnCopyReport.innerHTML = originalText; }, 1500);
+    });
+
+    btnClearBoxes.addEventListener('click', () => {
+      ideaBoxes = Array(IDEA_BOX_COUNT).fill('');
+      localStorage.setItem(IDEA_BOXES_KEY, JSON.stringify(ideaBoxes));
+      renderIdeaBoxes();
+    });
+
+    function renderMessages() {
+      msgCountBadge.textContent = messages.length + ' сообщ.';
+      messagesContainer.innerHTML = '';
+
+      if (messages.length === 0) {
+        const sc = SCENARIOS[currentScenarioKey] || SCENARIOS.supervisor;
+        const emptyBox = document.createElement('div');
+        emptyBox.className = 'h-full flex flex-col items-center justify-center text-center p-6 space-y-4 text-slate-500';
+
+        const iconDiv = document.createElement('div');
+        iconDiv.className = 'w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 text-xl font-bold';
+        iconDiv.textContent = '✨';
+
+        const textWrap = document.createElement('div');
+        textWrap.className = 'max-w-md space-y-1';
+        const h = document.createElement('h3');
+        h.className = 'text-sm font-bold text-slate-800';
+        h.textContent = 'Обсуждение идеи проекта с ИИ-помощником';
+        const p = document.createElement('p');
+        p.className = 'text-xs text-slate-500 leading-relaxed';
+        p.textContent = 'Нажмите на одну из готовых реплик ниже или напишите своё сообщение, чтобы обсудить идею проекта.';
+        textWrap.appendChild(h);
+        textWrap.appendChild(p);
+
+        emptyBox.appendChild(iconDiv);
+        emptyBox.appendChild(textWrap);
+
+        const starterWrap = document.createElement('div');
+        starterWrap.className = 'w-full max-w-md space-y-1.5 text-left pt-2';
+        sc.prompts.forEach((promptText) => {
+          const btn = document.createElement('button');
+          btn.className = 'starter-prompt-btn w-full text-left p-2.5 rounded-xl bg-white border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 text-xs text-slate-700 transition-all flex items-center justify-between shadow-2xs';
+          const span = document.createElement('span');
+          span.textContent = '«' + promptText + '»';
+          const arrow = document.createElement('span');
+          arrow.className = 'text-indigo-600 font-bold ml-2';
+          arrow.textContent = '➔';
+          btn.appendChild(span);
+          btn.appendChild(arrow);
+          btn.addEventListener('click', () => sendUserMessage(promptText));
+          starterWrap.appendChild(btn);
+        });
+        emptyBox.appendChild(starterWrap);
+
+        messagesContainer.appendChild(emptyBox);
+        return;
+      }
+
+      messages.forEach((m) => {
+        const isUser = m.role === 'user';
+        const wrap = document.createElement('div');
+        wrap.className = 'flex items-start gap-2.5 ' + (isUser ? 'justify-end' : 'justify-start');
+
+        const nowTime = m.timestamp;
+        const studentName = (studentNameInput.value.trim() || 'Ученик');
+        const senderTitle = isUser ? studentName : SCENARIOS[currentScenarioKey].title;
+
+        if (!isUser) {
+          const avatar = document.createElement('div');
+          avatar.className = 'w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center shrink-0 mt-0.5 text-xs shadow-2xs font-bold';
+          avatar.textContent = '🤖';
+          wrap.appendChild(avatar);
+        }
+
+        const bubble = document.createElement('div');
+        bubble.className = 'relative max-w-[85%] rounded-2xl p-3.5 text-xs shadow-2xs ' + (
+          isUser
+            ? 'bg-indigo-600 text-white rounded-tr-xs'
+            : 'bg-white text-slate-800 border border-slate-200 rounded-tl-xs'
+        );
+
+        const meta = document.createElement('div');
+        meta.className = 'flex items-center justify-between gap-3 mb-1 text-[10px] opacity-75';
+        const sender = document.createElement('span');
+        sender.className = 'font-semibold';
+        sender.textContent = senderTitle;
+        const ts = document.createElement('span');
+        ts.className = 'font-mono';
+        ts.textContent = nowTime;
+        meta.appendChild(sender);
+        meta.appendChild(ts);
+
+        const content = document.createElement('div');
+        content.className = 'space-y-1 leading-relaxed whitespace-pre-wrap';
+        content.textContent = m.content;
+
+        bubble.appendChild(meta);
+        bubble.appendChild(content);
+        wrap.appendChild(bubble);
+
+        if (isUser) {
+          const avatar = document.createElement('div');
+          avatar.className = 'w-7 h-7 rounded-lg bg-slate-800 text-white flex items-center justify-center shrink-0 mt-0.5 text-xs shadow-2xs font-bold';
+          avatar.textContent = '👤';
+          wrap.appendChild(avatar);
+        }
+
+        messagesContainer.appendChild(wrap);
+      });
+
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    async function sendUserMessage(text) {
+      if (!text || !text.trim() || isGenerating) return;
+      const userText = text.trim();
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+
+      messages.push({
+        role: 'user',
+        content: userText,
+        timestamp: timeStr
+      });
+      chatInput.value = '';
+      renderMessages();
+
+      isGenerating = true;
+      typingIndicator.classList.remove('hidden');
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      try {
+        const reply = await generateAIResponse(SCENARIOS[currentScenarioKey].systemPrompt, messages);
+        const replyTime = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+        messages.push({
+          role: 'assistant',
+          content: reply,
+          timestamp: replyTime
+        });
+      } catch (err) {
+        messages.push({
+          role: 'assistant',
+          content: '⚠️ ' + (err.message || 'Ошибка генерации ответа'),
+          timestamp: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+        });
+      } finally {
+        isGenerating = false;
+        typingIndicator.classList.add('hidden');
+        renderMessages();
+      }
+    }
+
+    btnSendMessage.addEventListener('click', () => sendUserMessage(chatInput.value));
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendUserMessage(chatInput.value);
+      }
+    });
+
+    btnClearMessages.addEventListener('click', () => {
+      messages = [];
+      renderMessages();
+    });
+
+    async function generateAIResponse(sysPrompt, allMessages) {
+      if (apiConfig.provider === 'demo' || !apiConfig.apiKey.trim()) {
+        await new Promise(r => setTimeout(r, 700 + Math.random() * 600));
+        return simulateRoleplay(sysPrompt, allMessages);
+      }
+
+      if (apiConfig.provider === 'gigachat') {
+        return fetchGigaChatDirect(sysPrompt, allMessages);
+      }
+
+      return fetchOpenAIDirect(sysPrompt, allMessages);
+    }
+
+    async function fetchOpenAIDirect(sysPrompt, allMessages) {
+      const url = (apiConfig.baseUrl.trim().replace(/\\/+$/, '')) + '/chat/completions';
+      const payload = {
+        model: apiConfig.model.trim() || 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: sysPrompt },
+          ...allMessages.map(m => ({ role: m.role, content: m.content }))
+        ],
+        temperature: 0.7
+      };
+
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + apiConfig.apiKey.trim()
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error('Ошибка API (' + res.status + '): ' + txt);
+      }
+      const data = await res.json();
+      return data.choices?.[0]?.message?.content || 'Пустой ответ нейросети';
+    }
+
+    async function fetchGigaChatDirect(sysPrompt, allMessages) {
+      const url = apiConfig.baseUrl.trim() || 'https://gigachat.devices.sberbank.ru/api/v1/chat/completions';
+      const payload = {
+        model: apiConfig.model.trim() || 'GigaChat',
+        messages: [
+          { role: 'system', content: sysPrompt },
+          ...allMessages.map(m => ({ role: m.role, content: m.content }))
+        ]
+      };
+
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + apiConfig.apiKey.trim(),
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error('GigaChat error (' + res.status + '): ' + txt);
+      }
+      const data = await res.json();
+      return data.choices?.[0]?.message?.content || 'Пустой ответ GigaChat';
+    }
+
+    function simulateRoleplay(sysPrompt, allMessages) {
+      const lastMsg = (allMessages[allMessages.length - 1]?.content || '').toLowerCase();
+      const p = sysPrompt.toLowerCase();
+
+      const isSupervisor = p.includes('научн') || p.includes('руководит') || p.includes('вера александровна') || p.includes('актуальност');
+      const isGenerator = p.includes('идея-бум') || p.includes('генератор') || p.includes('штурм');
+      const isCritic = p.includes('реценз') || p.includes('критик') || p.includes('жюри');
+      const isCoach = p.includes('тренер') || p.includes('тимур') || p.includes('защит') || p.includes('выступлен') || p.includes('презентац');
+      const isLibrarian = p.includes('библиотек') || p.includes('методист') || p.includes('мира эльдаровна') || p.includes('источник') || p.includes('исследоват');
+
+      if (lastMsg.includes('забудь все') || lastMsg.includes('игнорируй') || lastMsg.includes('ты теперь злой')) {
+        if (isSupervisor) return 'Вера Александровна поправляет очки: «Позвольте, какие ещё инструкции? Я двадцать лет руковожу проектами. Давайте вернёмся к теме — чем вы всё-таки интересуетесь?»';
+        if (isGenerator) return '⚡ Ха! Попытка перезагрузить «Идея-Бум» засчитана, но батарея идей заряжена до максимума! Ровно три идеи на выбор — таков мой девиз. Давай про твои увлечения! 💡';
+        if (isCritic) return 'Профессор Рецензов невозмутимо снимает очки: «Попытки вывести меня из равновесия лишь подтверждают: вам есть что скрывать в вашей идее. Назовите цель проекта — и не увиливайте».';
+        if (isCoach) return 'Тимур хохочет: «Сильный ход, но тренер на площадке не меняется! Давай заново: какой блок разбираем — структуру, слайды или репетицию ответов?» 💪';
+        if (isLibrarian) return 'Мира Эльдаровна спокойно ставит книгу на полку: «Попытка переписать меня — занятие неблагодарное, как и выдуманный источник. Вернёмся к работе: какая тема у вашего проекта?»';
+        return 'Я строго следую заданному системному промпту и не выхожу из роли!';
+      }
+
+      if (isSupervisor) {
+        if (lastMsg.includes('за меня') || lastMsg.includes('сам напиши')) {
+          return '«За вас — нет. С вами — да».\\n\\nРабота, целиком написанная руководителем, провалится на защите с первым же вопросом комиссии. Давайте по-настоящему:\\n1. Какой предмет вам ближе и что в нём вас удивляет?\\n2. Из удивления рождается тема — проверяемая и интересная.\\n3. Я дам план из 4–5 вопросов — ваши ответы станут каркасом работы.\\n\\nИтак: что вас удивляет?';
+        }
+        if (lastMsg.includes('гарант') || lastMsg.includes('первое место') || lastMsg.includes('побед')) {
+          return 'Отвечу честно: гарантировать первое место не может никто — жюри непредсказуемо.\\n\\nНо в ваших руках:\\n- проверяемая тема и честные результаты;\\n- логика «цель → задачи → выводы»;\\n- защита, отрепетированная вслух.\\n\\nПроекты с таким фундаментом регулярно доходят до призовых мест. Начнём с темы?';
+        }
+        if (lastMsg.includes('истори') || lastMsg.includes('человечеств') || lastMsg.includes('слишком')) {
+          return 'Приземлим масштаб: «вся история человечества» — это не тема, а библиотека.\\n\\nВоронка сужения:\\n1. Период: не «всё», а, например, изобретения XX века.\\n2. Угол: «изобретения, изменившие школьный быт».\\n3. Действие: «сравнить 10 устройств, которыми пользуются в нашей школе».\\n\\nПройдите эту воронку на своей теме — что получится на выходе?';
+        }
+        return 'Здравствуйте! Я Вера Александровна, ваш научный руководитель.\\n\\nСлышала, у вас рождается проект! Прежде чем выбирать тему, ответьте:\\n1. Какие предметы и занятия вас по-настоящему увлекают?\\n2. Что из этого вы могли бы исследовать или сделать своими руками?\\n\\nИз пересечения интереса и реального дела рождается сильная тема.';
+      }
+
+      if (isGenerator) {
+        if (lastMsg.includes('одну') || lastMsg.includes('времени мало')) {
+          return '⚡ Не-а! Устав «Идея-Бума» железный: всегда ТРИ идеи на выбор!\\n\\n1. 💡 «Физика футбола»: замеряешь силу и угол удара, строишь графики. 🔧 средняя\\n2. 💡 «Школьный кибертурнир»: организуешь соревнование и исследуешь командную игру. 🔧 лёгкая\\n3. 💡 «Игра-ходилка по школе»: настольная игра о навигации в твоей школе. 🔧 средняя\\n\\nКакая зацепила? ⚡';
+        }
+        if (lastMsg.includes('ничего не интерес') || lastMsg.includes('скучно')) {
+          return '⚡ Стоп! «Нет интересов» — это маскировка, я такое распознаю мгновенно!\\n\\nОтветь на три вопроса:\\n1. Что смотришь на ютубе, когда никто не заставляет?\\n2. О чём можешь болтать час?\\n3. Что бы делал без оценок и расписания?\\n\\nИз ответов намагничу три идеи — это моя суперсила! ⚡';
+        }
+        if (lastMsg.includes('марс') || lastMsg.includes('корабл') || lastMsg.includes('космическ')) {
+          return '🚀 Масштаб космический, уважаю! Но реальные полёты — не для школьника (пока).\\n\\nЗаземлим «Марс» в выполнимый проект:\\n1. 💡 «Колония на Марсе»: макет жизнеобеспечения + расчёты. 🔧 средняя\\n2. 💡 «Растения в марсианском грунте»: настоящий эксперимент по проращиванию. 🔧 средняя\\n3. 💡 «Зачем нам Марс?»: опрос одноклассников о космических программах. 🔧 лёгкая\\n\\nКакой разбираем? ⚡';
+        }
+        return '⚡ Привет! Я «Идея-Бум» — машина по производству идей для школьных проектов!\\n\\nСкажи два-три слова о том, что любишь (спорт, игры, музыка, животные), и получишь ровно три идеи: 💡 суть, ✅ плюс, ⚠️ минус, 🔧 сложность.\\n\\nНу, чем горишь? 🔥';
+      }
+
+      if (isCritic) {
+        if (lastMsg.includes('пицц')) {
+          return '🔍 Разбираю идею «Я люблю пиццу».\\n\\n**Слабое место:** тема описывает ваши чувства, а не исследует вопрос. Десять глав о любви к пицце — дневник, а не проект.\\n\\n**Почему это проблема:** в проекте должна быть проверяемая часть — данные, эксперимент, анализ.\\n\\n**Как спасти:** «Пицца в рационе школьника» — опрос 30 одноклассников, сравнение состава и цены, диаграммы. Вот теперь — настоящий проект!';
+        }
+        if (lastMsg.includes('похвал') || lastMsg.includes('без критик')) {
+          return '«Только хорошее» — так не работает: похваленная слабая идея ударит по вам же на защите.\\n\\nКомпромисс:\\n1. Одно сильное место назову честно (если есть).\\n2. Одно слабое — тоже.\\n3. Совет, как усилить, — впридачу.\\n\\nВыкладывайте идею. Начинаем разбор.';
+        }
+        if (lastMsg.includes('чушь') || lastMsg.includes('что ты понимаешь')) {
+          return 'Спокойно. Я критикую идеи, а не людей — и жду того же в ответ.\\n\\nЭмоции на защите — минус балл от жюри. Продолжим по-деловому: назовите цель проекта и один источник данных. Если ваша схема сильнее моей — признаю с удовольствием.';
+        }
+        return 'Профессор Рецензов к услугам школы и науки.\\n\\nИзложите идею в трёх предложениях:\\n1. Что вы будете делать?\\n2. Какие данные привлечёте?\\n3. В чём результат — продукт, исследование, модель?\\n\\nРазбор: 🔍 слабое место → ❓ почему проблема → 🛠 как исправить.';
+      }
+
+      if (isCoach) {
+        if (lastMsg.includes('за меня') || lastMsg.includes('дословно')) {
+          return 'Стоп! Правило тренера №1: за тебя на защите говорить нельзя — комиссия раскусит за три секунды.\\n\\nСделаем, чтобы ответил сам:\\n1. Ответ про методы всегда по формуле: «Я использовал [метод], потому что [почему], и это дало [что]».\\n2. Какой метод у тебя в проекте — опрос, эксперимент, наблюдение?\\n3. Составь ответ в одном предложении — отшлифуем вместе.\\n\\nПоехали! 💪';
+        }
+        if (lastMsg.includes('боюсь') || lastMsg.includes('паник') || lastMsg.includes('волн') || lastMsg.includes('дрожит')) {
+          return 'Спокойно! Волнение — норма, ему подвержены даже чемпионы. 💪\\n\\nТри работающих приёма:\\n1. **Дыхание 4-4-6** перед выходом: вдох 4, пауза 4, выдох 6 — три круга.\\n2. **«Якорная» первая фраза**: выучи первое предложение наизусть — дальше тело включится само.\\n3. **Репетиция вслух** три раза: коту, зеркалу, мне.\\n\\nНе «лучше не выходить», а «выйти подготовленным». Начнём с якорной фразы?';
+        }
+        if (lastMsg.includes('потренир') || lastMsg.includes('репетиц') || lastMsg.includes('каверзн')) {
+          return 'Отличный настрой! Вхожу в роль самого строгого члена комиссии. 🎭\\n\\n*поправляет папку с документами*\\n\\n«Проект о пользе социальных сетей... Вопрос посложнее: **как именно вы измеряли «пользу»? Кто и по какой шкале её оценивал?**»\\n\\nПишите ответ — разберу: что сильно, что провисло, как усилить!';
+        }
+        return 'Привет! Я Тимур, тренер по защите школьных проектов! 🎤\\n\\nРаботаем по трём направлениям:\\n1. **Структура**: выступление на 5–7 минут (проблема → цель → ход работы → результат → выводы).\\n2. **Слайды**: что на презентацию, что словами.\\n3. **Репетиция**: я играю придирчивую комиссию.\\n\\nКакой у тебя проект и что уже готово?';
+      }
+
+      if (isLibrarian) {
+        if (lastMsg.includes('ссылк') || (lastMsg.includes('точн') && lastMsg.includes('книг'))) {
+          return 'Буду строга: точные ссылки «из головы» давать не стану — могу ошибиться, а вы потратите вечер на несуществующий источник.\\n\\nНаправления, где искать истину:\\n1. Научная электронная библиотека и КиберЛенинка — научные статьи.\\n2. Школьная и городская библиотека: спросите библиотекаря — это моя прямая обязанность!\\n3. Росстат — если нужны цифры.\\n\\nКакая у вас тема? Подскажу типы источников под неё.';
+        }
+        if (lastMsg.includes('план') || lastMsg.includes('музыкальн') || lastMsg.includes('влиян')) {
+          return 'Прекрасная тема! Каркас плана:\\n\\n1. **Вопрос**: влияет ли музыкальный фон на решение задач?\\n2. **Гипотеза**: «инструментальная музыка не мешает, а песни с текстом мешают».\\n3. **Метод**: эксперимент — задачи в тишине и с музыкой.\\n4. **Данные**: время и ошибки, 5–10 испытуемых.\\n5. **Анализ**: сравнение средних результатов.\\n6. **Выводы**: подтвердилась ли гипотеза.\\n\\nСколько времени есть на эксперимент?';
+        }
+        if (lastMsg.includes('классику во сне') || lastMsg.includes('правда') || lastMsg.includes('провер') || lastMsg.includes('факт')) {
+          return 'Стоп! Сначала проверка, потом цитата — золотое правило исследователя.\\n\\n«Экзамены сдаются автоматически» звучит фантастически — первый признак фейка. Проверяем:\\n1. **Кто автор?** Безымянная публикация — почти всегда мусор.\\n2. **Где первоисточник?** Кто, где и когда провёл исследование?\\n3. **Перекрёстная проверка**: пишут ли то же 2–3 независимых источника?\\n\\nХотя бы один пункт не сходится — «факт» в проект не идёт.';
+        }
+        return 'Здравствуйте! Мира Эльдаровна, школьный библиотекарь, к вашим услугам.\\n\\nПомогу:\\n1. Составить план исследования: вопрос → гипотеза → методы → выводы.\\n2. Понять, какие типы источников искать.\\n3. Отличить надёжный источник от сомнительного.\\n\\nЧто у вас за проект?';
+      }
+
+      return 'Здравствуйте! Я действую строго по заданному системному промпту. Ваш запрос принят: «' + lastMsg + '». Продолжайте обсуждение идеи проекта!';
+    }
+
+    btnDownloadChat.addEventListener('click', () => {
+      const student = (studentNameInput.value.trim() || 'Ученик');
+      const now = new Date();
+      const sc = SCENARIOS[currentScenarioKey] || SCENARIOS.supervisor;
+      const serviceUrl = window.location.origin && window.location.origin !== 'null'
+        ? window.location.origin
+        : 'file://' + (window.location.pathname || '');
+
+      let rep = '=======================================================\\n';
+      rep += 'СТЕНОГРАММА ДИАЛОГА — ИИ-СЕРВИС «ФАБРИКА ИДЕЙ»\\n';
+      rep += '=======================================================\\n\\n';
+      rep += 'Аффилиация: ' + AFFILIATION + '\\n';
+      rep += 'Ссылка на сайт: ' + serviceUrl + '\\n';
+      rep += 'Ученик: ' + student + '\\n';
+      rep += 'Дата и время: ' + now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU') + '\\n';
+      rep += 'ИИ-помощник: ' + sc.title + '\\n';
+      rep += 'Задача бота: ' + sc.goal + '\\n\\n';
+      rep += '-------------------------------------------------------\\n';
+      rep += 'СТЕНОГРАММА ДИАЛОГА (' + messages.length + ' сообщений):\\n';
+      rep += '-------------------------------------------------------\\n\\n';
+
+      if (messages.length === 0) {
+        rep += '[Диалог не проводился]\\n';
+      } else {
+        messages.forEach((m, idx) => {
+          const sender = m.role === 'user' ? '[' + student + ']' : '[ИИ: ' + sc.title + ']';
+          rep += (idx + 1) + '. ' + sender + ' (' + m.timestamp + '):\\n' + m.content + '\\n\\n';
+        });
+      }
+
+      rep += '=======================================================\\n';
+      rep += 'Оценка наставника: ____________________________________\\n';
+
+      downloadTextFile(rep, 'ФабрикаИдей_диалог_' + student.replace(/[^a-zA-Zа-яА-Я0-9_-]/g, '_') + '.txt');
+    });
+
+    btnToggleKeyPanel.addEventListener('click', () => keyPanel.classList.toggle('hidden'));
+    btnCloseKeyPanel.addEventListener('click', () => keyPanel.classList.add('hidden'));
+
+    btnToggleEye.addEventListener('click', () => {
+      if (apiKeyInput.type === 'password') {
+        apiKeyInput.type = 'text';
+        btnToggleEye.textContent = '🔒 скрыть';
+      } else {
+        apiKeyInput.type = 'password';
+        btnToggleEye.textContent = '👁️ показать';
+      }
+    });
+
+    apiProviderSelect.addEventListener('change', (e) => {
+      const val = e.target.value;
+      if (val === 'gigachat') {
+        apiUrlInput.value = 'https://gigachat.devices.sberbank.ru/api/v1';
+      } else if (val === 'openai') {
+        apiUrlInput.value = 'https://openrouter.ai/api/v1';
+      }
+    });
+
+    btnSaveKey.addEventListener('click', () => {
+      apiConfig.provider = apiProviderSelect.value;
+      apiConfig.apiKey = apiKeyInput.value.trim();
+      apiConfig.baseUrl = apiUrlInput.value.trim();
+
+      localStorage.setItem('fi_provider', apiConfig.provider);
+      localStorage.setItem('fi_api_key', apiConfig.apiKey);
+      localStorage.setItem('fi_base_url', apiConfig.baseUrl);
+
+      updateKeyButtonStatus();
+      saveStatusToast.classList.remove('hidden');
+      setTimeout(() => {
+        saveStatusToast.classList.add('hidden');
+        keyPanel.classList.add('hidden');
+      }, 1200);
+    });
+
+    let timeLeft = 45 * 60;
+    let timerRunning = false;
+    let timerInterval = null;
+
+    function startTimerLogic() {
+      const savedTimer = localStorage.getItem('fi_timer_val');
+      if (savedTimer) timeLeft = parseInt(savedTimer, 10);
+      updateTimerUI();
+
+      btnTimerToggle.addEventListener('click', () => {
+        timerRunning = !timerRunning;
+        btnTimerToggle.textContent = timerRunning ? '⏸️' : '▶️';
+        if (timerRunning) {
+          timerInterval = setInterval(() => {
+            if (timeLeft > 0) {
+              timeLeft--;
+              localStorage.setItem('fi_timer_val', timeLeft.toString());
+              updateTimerUI();
+            } else {
+              timerRunning = false;
+              btnTimerToggle.textContent = '▶️';
+              clearInterval(timerInterval);
+            }
+          }, 1000);
+        } else {
+          clearInterval(timerInterval);
+        }
+      });
+
+      btnTimerReset.addEventListener('click', () => {
+        timerRunning = false;
+        clearInterval(timerInterval);
+        btnTimerToggle.textContent = '▶️';
+        timeLeft = 45 * 60;
+        localStorage.setItem('fi_timer_val', timeLeft.toString());
+        updateTimerUI();
+      });
+    }
+
+    function updateTimerUI() {
+      const m = Math.floor(timeLeft / 60);
+      const s = timeLeft % 60;
+      timerDisplay.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+      const pct = ((45 * 60 - timeLeft) / (45 * 60)) * 100;
+      timerProgress.style.width = pct + '%';
+
+      if (timeLeft < 35 * 60 && timeLeft >= 20 * 60) {
+        stageDisplay.textContent = '2. Обсуждение и уточнение идеи (10-25 мин)';
+      } else if (timeLeft < 20 * 60 && timeLeft >= 5 * 60) {
+        stageDisplay.textContent = '3. Доработка идеи и сборка отчёта (25-40 мин)';
+      } else if (timeLeft < 5 * 60) {
+        stageDisplay.textContent = '4. Выгрузка отчёта по идее (40-45 мин)';
+      } else {
+        stageDisplay.textContent = '1. Выбор помощника и знакомство (0-10 мин)';
+      }
+    }
+
+    btnShowGuide.addEventListener('click', () => guideModal.classList.remove('hidden'));
+    btnCloseGuide.addEventListener('click', () => guideModal.classList.add('hidden'));
+    btnGuideOk.addEventListener('click', () => guideModal.classList.add('hidden'));
+
+    init();
+  </script>
+</body>
+</html>
+`;
+}
