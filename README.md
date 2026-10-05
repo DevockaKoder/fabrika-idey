@@ -57,10 +57,20 @@ node backend-server.js   # http://localhost:3001
 
 ## 🔑 Ключ GigaChat
 
-Ключ вшит в `src/config/apiKeyConfig.ts` (константа `DEFAULT_API_KEY`) — приложение
-сразу работает на всех компьютерах без настройки. Полный цикл (OAuth-обмен → chat/completions)
-выполняет серверный прокси: `api/gigachat.ts` (Vercel), `server.ts` (dev/prod Express),
-`backend-server.js` (автономный, Node 18+). Подробнее: [README_BACKEND.md](README_BACKEND.md).
+Ключ **не хранится в коде** — он живёт на сервере в переменной окружения `GIGACHAT_API_KEY`:
+
+- **локально**: скопируйте `.env.example` в `.env` и вставьте ключ — его читают `server.ts`
+  (`npm run dev`) и `backend-server.js`;
+- **Vercel**: переменная окружения `GIGACHAT_API_KEY` в настройках проекта (её читает
+  `api/gigachat.ts`);
+- **Render**: переменная окружения в настройках Web Service (пример — `README_BACKEND.md`).
+
+Клиент вызывает `/api/gigachat` без ключа — сервер подставляет свой. Если на сервере ключа нет,
+используется личный ключ, введённый учеником в панели «🔑 Ключ API»; если нет и его — работает
+демо-симулятор. В браузерный бандл ключ не попадает никогда.
+
+Полный цикл (OAuth-обмен → chat/completions) выполняет серверный прокси: `api/gigachat.ts`
+(Vercel), `server.ts` (dev/prod Express), `backend-server.js` (автономный, Node 18+).
 
 Аффилиация и ссылка на сайт для отчётов настраиваются в `src/config/serviceInfo.ts`
 (константы `AFFILIATION` и `SERVICE_URL`; если `SERVICE_URL` пуст — берётся адрес текущей страницы).

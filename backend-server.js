@@ -13,10 +13,28 @@
 
 import http from 'http';
 import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
+// Простой загрузчик .env (без зависимостей): KEY=VALUE из файла .env в папке запуска
+try {
+  const envPath = path.join(process.cwd(), '.env');
+  if (fs.existsSync(envPath)) {
+    for (const line of fs.readFileSync(envPath, 'utf8').split(/\r?\n/)) {
+      const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
+      if (m && process.env[m[1]] === undefined) {
+        process.env[m[1]] = m[2].replace(/^["']|["']$/g, '');
+      }
+    }
+  }
+} catch {
+  // .env необязателен
+}
+
 const PORT = process.env.PORT || 3001;
+const SERVER_GIGACHAT_KEY = (process.env.GIGACHAT_API_KEY || '').trim();
 const tokenCache = new Map();
 
 async function getAccessToken(apiKey, scope = 'GIGACHAT_API_PERS') {
@@ -74,7 +92,11 @@ const server = http.createServer(async (req, res) => {
 
   if (url.pathname === '/api/health' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    return res.end(JSON.stringify({ status: 'ok', serverTime: new Date().toISOString() }));
+    return res.end(JSON.stringify({
+      status: 'ok',
+      serverTime: new Date().toISOString(),
+      gigachatServerKey: Boolean(SERVER_GIGACHAT_KEY),
+    }));
   }
 
   if (url.pathname === '/api/gigachat' && req.method === 'POST') {
@@ -83,11 +105,16 @@ const server = http.createServer(async (req, res) => {
     req.on('end', async () => {
       try {
         const parsed = JSON.parse(body || '{}');
-        const { apiKey, systemPrompt, messages, model, scope } = parsed;
+        const { systemPrompt, messages, model, scope } = parsed;
+
+        // Приоритет: ключ из окружения сервера (GIGACHAT_API_KEY / .env),
+        // затем ключ, переданный клиентом (личный ключ пользователя)
+        const clientKey = typeof parsed.apiKey === 'string' ? parsed.apiKey.trim() : '';
+        const apiKey = SERVER_GIGACHAT_KEY || clientKey;
 
         if (!apiKey) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
-          return res.end(JSON.stringify({ error: 'API-ключ не передан' }));
+          return res.end(JSON.stringify({ error: 'API-ключ GigaChat не найден: задайте GIGACHAT_API_KEY в .env/окружении или передайте личный ключ' }));
         }
 
         const token = await getAccessToken(apiKey, scope || 'GIGACHAT_API_PERS');
@@ -141,4 +168,7 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ GigaChat Backend Proxy запущен на http://localhost:${PORT}`);
   console.log(`📡 URL для GitHub Pages: http://localhost:${PORT} (или ваш публичный URL)`);
+  console.log(SERVER_GIGACHAT_KEY
+    ? '🔑 Серверный ключ GIGACHAT_API_KEY загружен — клиенты могут работать без своего ключа'
+    : '⚠️ GIGACHAT_API_KEY не задан — клиенты должны передавать свой ключ в запросе');
 });

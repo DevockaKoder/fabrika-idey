@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import crypto from 'crypto';
@@ -101,16 +102,28 @@ async function startServer() {
 
   // Health check endpoint
   app.get('/api/health', (_req, res) => {
-    res.json({ status: 'ok', serverTime: new Date().toISOString() });
+    res.json({
+      status: 'ok',
+      serverTime: new Date().toISOString(),
+      gigachatServerKey: Boolean((process.env.GIGACHAT_API_KEY || '').trim()),
+    });
   });
 
   // GigaChat dedicated proxy endpoint with OAuth handshake
   app.post('/api/gigachat', async (req, res) => {
     try {
-      const { apiKey, systemPrompt, messages, model, scope } = req.body;
+      const { systemPrompt, messages, model, scope } = req.body;
 
-      if (!apiKey || typeof apiKey !== 'string' || !apiKey.trim()) {
-        return res.status(400).json({ error: 'API-ключ GigaChat не передан' });
+      // Приоритет: ключ из переменной окружения сервера (GIGACHAT_API_KEY),
+      // затем ключ, переданный клиентом (личный ключ пользователя)
+      const serverKey = (process.env.GIGACHAT_API_KEY || '').trim();
+      const clientKey = typeof req.body?.apiKey === 'string' ? req.body.apiKey.trim() : '';
+      const apiKey = serverKey || clientKey;
+
+      if (!apiKey) {
+        return res.status(400).json({
+          error: 'API-ключ GigaChat не найден: задайте переменную окружения GIGACHAT_API_KEY на сервере или передайте личный ключ',
+        });
       }
 
       // 1. Obtain temporary OAuth access token using Client Secret / Auth Key

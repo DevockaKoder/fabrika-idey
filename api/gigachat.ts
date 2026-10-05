@@ -90,10 +90,18 @@ export default async function handler(req: any, res: any) {
 
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
-    const { apiKey, systemPrompt, messages, model, scope } = body;
+    const { systemPrompt, messages, model, scope } = body;
 
-    if (!apiKey || typeof apiKey !== 'string' || !apiKey.trim()) {
-      return res.status(400).json({ error: 'API-ключ GigaChat не передан' });
+    // Приоритет: ключ из переменной окружения сервера (GIGACHAT_API_KEY),
+    // затем ключ, переданный клиентом (личный ключ пользователя)
+    const serverKey = (process.env.GIGACHAT_API_KEY || '').trim();
+    const clientKey = typeof body.apiKey === 'string' ? body.apiKey.trim() : '';
+    const apiKey = serverKey || clientKey;
+
+    if (!apiKey) {
+      return res.status(400).json({
+        error: 'API-ключ GigaChat не найден: задайте переменную окружения GIGACHAT_API_KEY на сервере или передайте личный ключ',
+      });
     }
 
     // 1. Get temporary OAuth access token from GigaChat

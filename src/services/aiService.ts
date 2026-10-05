@@ -50,15 +50,17 @@ export async function sendChatMessage(
   messages: ChatMessage[]
 ): Promise<string> {
   const activeKey = settings.apiKey.trim();
-  if (!activeKey) {
-    throw new Error(
-      'API-ключ не указан. Нажмите на кнопку «🔑 Ключ API» в правом верхнем углу и введите ключ, либо вставьте его в коде в константу DEFAULT_API_KEY.'
-    );
-  }
 
-  // Auto-detect GigaChat key or explicit provider selection
+  // GigaChat: ключ может храниться на сервере (GIGACHAT_API_KEY), тогда клиент
+  // вызывает прокси без ключа и сервер подставляет свой
   if (settings.provider === 'gigachat' || isLikelyGigaChatKey(activeKey)) {
     return fetchGigaChat(settings, systemPrompt, messages);
+  }
+
+  if (!activeKey) {
+    throw new Error(
+      'API-ключ не указан. Нажмите на кнопку «🔑 Ключ API» в правом верхнем углу и введите ключ, либо настройте GIGACHAT_API_KEY на сервере.'
+    );
   }
 
   return fetchOpenAICompatible(settings, systemPrompt, messages);
@@ -185,6 +187,15 @@ async function fetchGigaChatClientSide(
   const cleanKey = settings.apiKey.trim();
   let accessToken = cleanKey;
 
+  // Ключа нет ни у клиента, ни (как оказалось) на сервере — запускаем демо-симулятор
+  if (!cleanKey) {
+    const simulated = generateSimulatedResponse(systemPrompt, messages);
+    return (
+      simulated +
+      '\n\n*(ℹ️ Демо-режим: серверный ключ GIGACHAT_API_KEY не настроен, а личный ключ не введён. Попросите наставника настроить ключ на бэкенде или введите свой в панели «Ключ API».)*'
+    );
+  }
+
   // If user provided a Client Secret (not a raw eyJ... token), perform OAuth exchange
   if (!cleanKey.startsWith('eyJ')) {
     const now = Date.now();
@@ -231,7 +242,7 @@ async function fetchGigaChatClientSide(
           const simulated = generateSimulatedResponse(systemPrompt, messages);
           return (
             simulated +
-            '\n\n*(ℹ️ Режим симулятора: статический хостинг GitHub Pages блокирует прямые запросы к GigaChat из-за CORS и сертификатов Сбера. Чтобы подключить реальную модель, запустите локальный бэкенд `node backend-server.js` или разверните проект на Vercel.)*'
+            '\n\n*(ℹ️ Режим симулятора: со статического хостинга GitHub Pages недоступен серверный бэкенд (CORS и сертификаты Сбера). Реальные ответы появятся, когда фронтенд подключён к бэкенду с настроенным GIGACHAT_API_KEY — локально (`node backend-server.js`), на Vercel или Render.)*'
           );
         }
         throw oauthErr;
