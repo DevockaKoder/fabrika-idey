@@ -38,6 +38,9 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        with:
+          # Автоматически включать Pages для репозитория, если ещё не включён
+          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
