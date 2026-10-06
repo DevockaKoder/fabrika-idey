@@ -69,7 +69,7 @@ export function ChatInterface({
     let report = `=======================================================\n`;
     report += `СТЕНОГРАММА ДИАЛОГА — ИИ-СЕРВИС «ФАБРИКА ИДЕЙ»\n`;
     report += `=======================================================\n\n`;
-    report += `Аффилиация: ${AFFILIATION}\n`;
+    report += `${AFFILIATION}\n`;
     report += `Ссылка на сайт: ${serviceUrl}\n`;
     report += `Ученик: ${defaultName}\n`;
     report += `Дата и время проведения: ${dateStr} ${timeStr}\n`;

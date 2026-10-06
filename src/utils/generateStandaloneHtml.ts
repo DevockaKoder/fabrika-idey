@@ -509,7 +509,7 @@ export function getStandaloneHtmlContent(): string {
       let rep = '=======================================================\\n';
       rep += 'ВЫГРУЗКА ИДЕИ — ИИ-СЕРВИС «ФАБРИКА ИДЕЙ»\\n';
       rep += '=======================================================\\n\\n';
-      rep += 'Аффилиация: ' + AFFILIATION + '\\n';
+      rep += AFFILIATION + '\\n';
       rep += 'Ссылка на сайт: ' + serviceUrl + '\\n';
       rep += 'Ученик: ' + studentName + '\\n';
       rep += 'Дата: ' + now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU') + '\\n\\n';
@@ -890,7 +890,7 @@ export function getStandaloneHtmlContent(): string {
       let rep = '=======================================================\\n';
       rep += 'СТЕНОГРАММА ДИАЛОГА — ИИ-СЕРВИС «ФАБРИКА ИДЕЙ»\\n';
       rep += '=======================================================\\n\\n';
-      rep += 'Аффилиация: ' + AFFILIATION + '\\n';
+      rep += AFFILIATION + '\\n';
       rep += 'Ссылка на сайт: ' + serviceUrl + '\\n';
       rep += 'Ученик: ' + student + '\\n';
       rep += 'Дата и время: ' + now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU') + '\\n';

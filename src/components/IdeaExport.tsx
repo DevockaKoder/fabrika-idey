@@ -60,7 +60,7 @@ export function IdeaExport() {
     let report = `=======================================================\n`;
     report += `ВЫГРУЗКА ИДЕИ — ИИ-СЕРВИС «ФАБРИКА ИДЕЙ»\n`;
     report += `=======================================================\n\n`;
-    report += `Аффилиация: ${AFFILIATION}\n`;
+    report += `${AFFILIATION}\n`;
     report += `Ссылка на сайт: ${serviceUrl}\n`;
     report += `Ученик: ${studentName}\n`;
     report += `Дата: ${dateStr} ${timeStr}\n\n`;
@@ -187,7 +187,7 @@ export function IdeaExport() {
         {downloadedNotice && (
           <p className="text-center text-[11px] text-emerald-600 font-semibold flex items-center justify-center gap-1 animate-in fade-in">
             <CheckCircle2 className="w-3.5 h-3.5" />
-            Отчёт сформирован: аффилиация, ссылка на сайт и ваши идеи
+            Отчёт сформирован
           </p>
         )}
         <p className="text-[10px] text-slate-400 leading-snug">
